@@ -1,87 +1,89 @@
-# 把 Karpathy 的 LLM Wiki 跑起來之後，我學到的事
+# I ran Karpathy's LLM Wiki. Here's what I learned.
 
-Andrej Karpathy 在 2025 年推了一個想法：別每次問 AI 都從原始資料重新搜尋，花一次 token 把知識編譯成 Wiki，之後直接翻。
+In 2025, Andrej Karpathy pushed out an idea: stop re-searching raw sources every time you query an AI. Pay the token cost once to compile your knowledge into a wiki, then just read the wiki from then on.
 
-他發了一份 gist 描述這個 pattern，拿了一萬多顆星，但那是一份 idea file，不是實作指南，他沒走完從素材到成品的全部路徑，也沒把系統跑到需要維護的階段。
+He wrote the pattern up as a gist. Ten-thousand-plus stars. But it's an idea file, not an implementation guide. He didn't walk the full path from raw material to finished artifact, and he didn't run the system long enough to hit maintenance problems.
 
-我走完了。
+I did.
 
-
-## 實驗規模
-
-輸入總計 584 篇社群貼文、8,668 則回覆、以及過往講座教材、課程素材、相關知識整理。
-
-經由特定規則與標準，使用 LLM 過濾後，萃取出 630 多個知識原子，每個原子一個核心論點，再按主題分組為 11 個分支，最終編譯成 83 頁 Wiki。
-
-完整的操作流程在 METHODOLOGY.md 裡。
+🇹🇼 [中文原文](STORY.zh-TW.md)
 
 
-## Compile > RAG 的前提
+## Scale
 
-Karpathy 主張知識應該是持久的複利產物，不該每次即時生成，但這個論點有成立條件。
+Input: 584 social posts, 8,668 replies, plus old lecture materials, course materials, and a pile of prior notes.
 
-知識量在 200 頁以內，超過的話 LLM 翻 index 定位的效率會下降，需要搭配搜尋。
+Filtered through an LLM against a specific ruleset, the output was 630-odd knowledge atoms — one claim per atom — grouped by topic into 11 branches, then compiled into 83 wiki pages.
 
-知識要相對穩定，整理的是認知地圖，不是即時新聞。
-
-知識庫要有統一的觀點，是個人的知識整理，不是聚合一百個人的不同意見。
-
-品質比覆蓋率重要，寧可 50 頁寫透也不要 500 頁淺淺帶過。
-
-不符合這些條件的話 RAG 可能更適合，兩者不互斥，核心知識用 Compile，邊緣查詢用 RAG。
+Full procedure in METHODOLOGY.md.
 
 
-## 他沒碰到的問題
+## When Compile > RAG
 
-Karpathy 定義了三個維護操作：Ingest（新增素材）、Query（查詢）、Lint（健康檢查），但他沒走到需要處理維護細節的階段。
+Karpathy's claim is that knowledge should be a persistent, compounding artifact, not regenerated on every query. The claim holds, but only under specific conditions.
 
+Volume under 200 wiki pages. Past that, the LLM loses efficiency scanning `index.md` and you need a real search mechanism alongside it.
 
-### Lint 規則的信噪比
+Knowledge is relatively stable. You're organizing a cognitive map, not breaking news.
 
-第一版 Lint 用寬鬆的 regex 掃描「目前」「現在」「最新」「currently」等時效性用語，83 頁跑出 47 個 warnings。
+A single point of view. It's personal knowledge, not an aggregation of a hundred different voices.
 
-40 多個是口語敘述裡的歷史對比，像「以前要裝 WSL，現在不用了」，不是過期資訊，真正值得看的只有 7 個。
+Quality over coverage. 50 pages written tight beat 500 pages written shallow.
 
-每次打開都是噪音的報告，跑三次就不會再有人看。
-
-收緊 pattern 後只抓帶版本號和日期的組合——「截至 2025-06」「最新版」「剛推出」——warnings 降到 16 個，每個都是帶日期標記的時效聲明。
-
-這裡有一個更深的問題：Karpathy 的 Wiki 偏百科語氣，「避免使用模糊時效詞」對他合理，但口語化的知識庫天生就會大量使用「現在」「目前」，如果為了 Lint 規範把這些詞全部改成「截至 2026-04」，文章就不像人講話了，Lint 規範應該配合寫作風格，不是反過來。
+If your case doesn't meet these, RAG is probably the better fit. The two don't exclude each other — compile your stable core, RAG the long tail.
 
 
-### 平行編譯的命名衝突
+## Problems he didn't hit
 
-Karpathy 一個人寫，一次一頁，不會碰到命名衝突。
-
-11 個 agent 平行編譯的時候，同一批原子會被不同 agent 編譯出不同檔名，同樣的內容一個叫 `mcp-plus-skills.md` 另一個叫 `mcp-plus-skills-architecture.md`。
-
-編譯前先鎖定 slug 清單就能解決，各 agent 負責填內容不負責取名字，多 agent 平行產出的場景都需要事先協調命名空間。
+Karpathy defined three maintenance operations: Ingest (add material), Query (look things up), Lint (health check). He never got to the point of actually handling the details.
 
 
-### Lint 的程式層與 LLM 層
+### Lint's signal-to-noise
 
-Karpathy 說 Lint 要檢查矛盾、孤立頁面、幽靈連結、過時聲明，但沒區分哪些能自動化。
+The first Lint version used a loose regex to catch temporal words — "currently", "latest", "now", "目前". Across 83 pages it produced 47 warnings.
 
-幽靈連結、孤立頁面、格式違規這些確定性問題可以用腳本秒級完成。
+Forty-odd of those were rhetorical uses inside prose, like "you used to need WSL, now you don't". Not stale claims — just how people write. Only 7 were actually worth a second look.
 
-矛盾偵測和過期判斷需要語意理解，只能交給 LLM。
+A report that's 85% noise gets opened three times, then ignored forever.
 
-先讓程式清掉確定性的問題，LLM 才能專注在需要判斷的事上，不分層的話 LLM 的注意力會被格式問題佔滿。
+I tightened the pattern to only match temporal words paired with versions or dates — "as of 2025-06", "latest version", "just released". Warnings dropped to 16, every one a real dated claim worth verifying.
 
-
-## 成效
-
-630 多個散落的知識點變成 83 頁有交叉引用的 Wiki，找東西翻 index，讓 AI 幫忙寫東西的時候丟 Wiki 頁面當 context，維護是增量的不用重建。
-
-最大的收穫不是 Wiki 本身，是整理的過程裡才看清自己的知識版圖——哪些地方以為很熟其實有漏洞，哪些觀點已經過時了自己還不知道，哪些主題其實沒什麼好說的。
+There's a deeper point here. Karpathy's wiki leans encyclopedic, so "avoid vague temporal words" is reasonable for him. But a conversational knowledge base will naturally use "now" and "currently" all the time. If you enforce the lint rule hard enough to convert every one of those into "as of 2026-04", the prose stops sounding like a person wrote it. Lint should match your writing style, not overwrite it.
 
 
-## 自己跑
+### Parallel-compile naming collisions
 
-METHODOLOGY.md 有完整的操作流程，AI 讀完配合你的素材就能跑。
+Karpathy writes alone, one page at a time. No collisions.
 
-`scripts/` 裡有三個腳本：`lint.sh` 做健康檢查，`gen-index.sh` 重建索引，`log-append.sh` 追加變更記錄。
+Run 11 agents compiling in parallel and the same set of atoms gets two different filenames from two different agents — one calls it `mcp-plus-skills.md`, the other `mcp-plus-skills-architecture.md`.
+
+Fix: pre-lock the slug list before fan-out. Agents fill assigned slugs with content; they don't name files. Any parallel-producer scenario needs namespace coordination up front.
+
+
+### Programmatic Lint vs LLM Lint
+
+Karpathy says Lint should catch contradictions, orphan pages, ghost links, and stale claims. He doesn't split which ones can be automated.
+
+Ghost links, orphan pages, format violations — deterministic problems, handled by a shell script in seconds.
+
+Contradiction detection and staleness judgment need semantic understanding. Those go to the LLM.
+
+Run the script first so the LLM reads a clean document. Without the split, its attention gets eaten by format issues instead of the things actually worth judging.
+
+
+## What came out of it
+
+630+ scattered knowledge points became an 83-page cross-referenced wiki. Finding something is now reading the index. When I ask an AI to help write, I drop the relevant wiki pages in as context. Maintenance is incremental — no rebuild.
+
+The bigger return wasn't the wiki itself. It was seeing my own knowledge map clearly once it was organized — where I thought I was solid but actually had gaps, where my views had gone stale without me noticing, where a topic I assumed mattered turned out to have little to say.
+
+
+## Running it yourself
+
+METHODOLOGY.md has the full procedure. Point an AI at it with your own materials and it can run.
+
+`scripts/` has three scripts: `lint.sh` for health checks, `gen-index.sh` to rebuild the index, `log-append.sh` to append change entries.
 
 ---
 
-基於 Andrej Karpathy 的 LLM Wiki 概念，經實戰迭代
+Built on Andrej Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern, iterated through real-world use.

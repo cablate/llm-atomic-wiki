@@ -82,7 +82,7 @@ Atoms are where the real work happens. Wiki is rebuildable from atoms; atoms are
 llm-atomic-wiki/
 ├── README.md              ← you are here
 ├── README.zh-TW.md        ← Chinese version
-├── STORY.md               ← the personal story of running it end-to-end
+├── STORY.md / STORY.zh-TW.md  ← the personal story, bilingual
 ├── METHODOLOGY.md         ← 6-phase pipeline (English)
 ├── METHODOLOGY.zh-TW.md   ← original Chinese methodology
 ├── CLAUDE.md              ← schema for the LLM operating this repo

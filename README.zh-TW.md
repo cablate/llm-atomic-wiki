@@ -7,7 +7,7 @@
 
 這個 repo 只給你框架——方法論、schema、腳本、資料夾結構。fork 下去跑你自己的素材，我實際的原子跟 wiki 都不在這包裡。
 
-🇺🇸 [English README](README.md) · 📖 [這個 repo 的故事](STORY.md)
+🇺🇸 [English README](README.md) · 📖 [這個 repo 的故事](STORY.zh-TW.md)
 
 ---
 
@@ -82,7 +82,7 @@ Karpathy:   raw → wiki → {Ingest, Query, Lint}
 llm-atomic-wiki/
 ├── README.md              ← 英文版
 ├── README.zh-TW.md        ← 你在這
-├── STORY.md               ← 跑完一輪的個人故事
+├── STORY.md / STORY.zh-TW.md  ← 跑完一輪的個人故事（雙語）
 ├── METHODOLOGY.md         ← 6 階段流水線（英文）
 ├── METHODOLOGY.zh-TW.md   ← 原始中文方法論
 ├── CLAUDE.md              ← 給 LLM 的 schema
@@ -136,7 +136,7 @@ llm-atomic-wiki/
 
 ## 深入閱讀
 
-- **[STORY.md](STORY.md)** ——個人故事：為什麼跑、什麼有用、什麼出乎意料。
+- **[STORY.zh-TW.md](STORY.zh-TW.md)** ——個人故事：為什麼跑、什麼有用、什麼出乎意料。
 - **[METHODOLOGY.md](METHODOLOGY.md)** ——六階段流水線（骨架 → 段落分類 → 萃取 → 品質整理 → 外部校驗 → wiki 編譯）和三個維護操作。
 - **[METHODOLOGY.zh-TW.md](METHODOLOGY.zh-TW.md)** ——原始中文版方法論，內容更詳盡。
 - **[CLAUDE.md](CLAUDE.md)** ——告訴 LLM 怎麼操作這個 repo 的正式 spec。
