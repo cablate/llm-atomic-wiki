@@ -1,8 +1,40 @@
-# CLAUDE.md — Schema for LLMs operating this repo
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
+## Quick commands
+
+All scripts live in `scripts/` and require Bash (Git Bash or WSL on Windows).
+
+```bash
+# After every Ingest or Compile run — in this order:
+bash scripts/gen-index.sh                    # rebuild index.md
+bash scripts/log-append.sh "what you did"    # append to log.md
+
+# After Compile, also run:
+bash scripts/lint.sh                         # programmatic Lint → lint-report.md
+```
+
+### Claude Code skills (invoke from chat)
+
+| Skill | When to use |
+|-------|-------------|
+| `/ingest` | Extract atoms from raw/ material |
+| `/compile` | Synthesize atoms into wiki pages |
+| `/query` | Answer a question from the wiki |
+| `/lint` | Run both programmatic + LLM Lint layers |
+| `/refresh` | Rebuild index.md + append log.md |
+| `/branch-plan` | Design or audit branch structure |
+
+---
+
+## Schema for LLMs operating this repo
 
 You are operating on a knowledge base built on the LLM Wiki pattern (Karpathy 2026), with four optimizations: an atom layer, topic-branch organization, two-layer Lint, and parallel-compile naming locks.
 
-This file is the formal spec — read it before touching anything. Mental model, operations, file formats, lifecycle rules, and what you must never do.
+Read everything below before touching anything. Mental model, operations, file formats, lifecycle rules, and what you must never do.
 
 ---
 

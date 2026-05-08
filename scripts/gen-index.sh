@@ -73,11 +73,11 @@ for entry in "${BRANCHES[@]}"; do
   echo "| Slug | Title |" >> "$INDEX"
   echo "|------|-------|" >> "$INDEX"
 
-  for f in $(printf '%s\n' "${FILES[@]}" | sort); do
+  while IFS= read -r f; do
     slug=$(basename "$f" .md)
     title=$(head -1 "$f" | sed 's/^# //')
     echo "| [[$slug]] | $title |" >> "$INDEX"
-  done
+  done < <(printf '%s\n' "${FILES[@]}" | sort)
 
   echo "" >> "$INDEX"
 done
