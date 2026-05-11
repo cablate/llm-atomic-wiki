@@ -9,23 +9,10 @@ WIKI_DIR="$(cd "$(dirname "$0")/../wiki" && pwd)"
 INDEX="$WIKI_DIR/../index.md"
 
 # ─── Branch order and display names ───
-# Edit this array for your branches. Leave empty (declare -a BRANCHES=())
-# to auto-discover by filename prefix and capitalize display names automatically.
-#
-# Reference implementation uses these 11 branches in this order:
-declare -a BRANCHES=(
-  "harness-engineering|Harness Engineering"
-  "mcp|MCP"
-  "ai-skills|AI Skills"
-  "vibe-coding|Vibe Coding"
-  "ai-agent|AI Agent"
-  "self-media|Self-Media"
-  "product-business|Product & Business"
-  "claude-code|Claude Code"
-  "context-engineering|Context Engineering"
-  "career-mindset|Career & Mindset"
-  "developer-workflow|Developer Workflow"
-)
+# Edit this array once your branch set stabilizes. Empty array = auto-discover
+# branches by filename prefix (everything before first hyphen), and capitalize
+# display names automatically.
+declare -a BRANCHES=()
 
 # ─── Auto-discover branches if not overridden ───
 if [ ${#BRANCHES[@]} -eq 0 ]; then
@@ -86,11 +73,11 @@ for entry in "${BRANCHES[@]}"; do
   echo "| Slug | Title |" >> "$INDEX"
   echo "|------|-------|" >> "$INDEX"
 
-  for f in $(printf '%s\n' "${FILES[@]}" | sort); do
+  while IFS= read -r f; do
     slug=$(basename "$f" .md)
     title=$(head -1 "$f" | sed 's/^# //')
     echo "| [[$slug]] | $title |" >> "$INDEX"
-  done
+  done < <(printf '%s\n' "${FILES[@]}" | sort)
 
   echo "" >> "$INDEX"
 done

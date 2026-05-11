@@ -19,7 +19,7 @@ for f in "$WIKI_DIR"/*.md; do
   [ -f "$f" ] || continue
   slug=$(basename "$f" .md)
   # Skip index and log
-  [[ "$slug" == "index" || "$slug" == "log" ]] && continue
+  [[ "$slug" == "index" || "$slug" == "log" || "$slug" == "_template" || "$slug" == "README" ]] && continue
   SLUGS["$slug"]=1
 done
 
@@ -32,7 +32,7 @@ FOUND_GHOST=0
 for f in "$WIKI_DIR"/*.md; do
   [ -f "$f" ] || continue
   slug=$(basename "$f" .md)
-  [[ "$slug" == "index" || "$slug" == "log" ]] && continue
+  [[ "$slug" == "index" || "$slug" == "log" || "$slug" == "_template" || "$slug" == "README" ]] && continue
 
   # Extract all [[...]] links
   while IFS= read -r link; do
@@ -66,7 +66,7 @@ done
 for f in "$WIKI_DIR"/*.md; do
   [ -f "$f" ] || continue
   slug=$(basename "$f" .md)
-  [[ "$slug" == "index" || "$slug" == "log" ]] && continue
+  [[ "$slug" == "index" || "$slug" == "log" || "$slug" == "_template" || "$slug" == "README" ]] && continue
 
   while IFS= read -r link; do
     target="${link%%|*}"
@@ -97,7 +97,7 @@ FOUND_FORMAT=0
 for f in "$WIKI_DIR"/*.md; do
   [ -f "$f" ] || continue
   slug=$(basename "$f" .md)
-  [[ "$slug" == "index" || "$slug" == "log" ]] && continue
+  [[ "$slug" == "index" || "$slug" == "log" || "$slug" == "_template" || "$slug" == "README" ]] && continue
 
   # 3a. First line must be # title
   first_line=$(head -1 "$f")
@@ -135,7 +135,7 @@ PATTERNS='最新版|目前最新|currently v|latest v|just released|剛出|剛�
 for f in "$WIKI_DIR"/*.md; do
   [ -f "$f" ] || continue
   slug=$(basename "$f" .md)
-  [[ "$slug" == "index" || "$slug" == "log" ]] && continue
+  [[ "$slug" == "index" || "$slug" == "log" || "$slug" == "_template" || "$slug" == "README" ]] && continue
 
   matches=$(grep -nE "$PATTERNS" "$f" 2>/dev/null)
   if [ -n "$matches" ]; then

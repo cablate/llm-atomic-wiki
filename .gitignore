@@ -24,6 +24,10 @@ lint-report.md
 # Personal notes / analysis (not for the public repo)
 GAP-ANALYSIS.md
 
+# ─── Secrets ───
+.env
+.env.*
+
 # ─── Python / OS / editor noise ───
 Python/
 __pycache__/
